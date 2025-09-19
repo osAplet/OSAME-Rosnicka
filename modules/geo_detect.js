@@ -1,45 +1,37 @@
 export async function zjistiPolohu() {
-  return new Promise((resolve) => {
-    let resolved = false;
+  const timeoutMs = 5000;
 
-    const timeout = setTimeout(async () => {
-      if (!resolved) {
-        const response = await fetch('https://ipapi.co/json/');
-        const data = await response.json();
-        resolved = true;
-        resolve({
-          lat: data.latitude,
-          lon: data.longitude,
-          zdroj: 'IP (timeout)'
-        });
-      }
-    }, 5000);
-
+  const gpsPromise = new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        if (!resolved) {
-          clearTimeout(timeout);
-          resolved = true;
-          resolve({
-            lat: pos.coords.latitude,
-            lon: pos.coords.longitude,
-            zdroj: 'GPS'
-          });
-        }
+        resolve({
+          lat: pos.coords.latitude,
+          lon: pos.coords.longitude,
+          zdroj: 'GPS'
+        });
       },
-      async () => {
-        if (!resolved) {
-          clearTimeout(timeout);
-          const response = await fetch('https://ipapi.co/json/');
-          const data = await response.json();
-          resolved = true;
-          resolve({
-            lat: data.latitude,
-            lon: data.longitude,
-            zdroj: 'IP (fallback)'
-          });
-        }
-      }
+      () => reject('GPS selhala')
     );
   });
+
+  const timeoutPromise = new Promise((_, reject) =>
+    setTimeout(() => reject('GPS timeout'), timeoutMs)
+  );
+
+  try {
+    return await Promise.race([gpsPromise, timeoutPromise]);
+  } catch {
+    // 🌍 Fallback na IP
+    try {
+      const response = await fetch('https://ipapi.co/json/');
+      const data = await response.json();
+      return {
+        lat: data.latitude,
+        lon: data.longitude,
+        zdroj: 'IP fallback'
+      };
+    } catch (err) {
+      throw new Error('❌ Nelze získat polohu ani přes IP');
+    }
+  }
 }
