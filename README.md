@@ -30,3 +30,4 @@ Pro licencování kontaktujte: `ai.software.os.aplet@gmail.com`
 
 Tento projekt je řízen právem České republiky.  
 Anglická verze popisu a licence je dostupná v souborech `README.en.md` a `LICENSE.en.md`.
+ 
