@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
   <meta charset="UTF-8">
-  <title>OSAME–Rosnička 🌧️</title>
+  <title>OSAME–Rosnička 🌍🌦️</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -17,7 +17,7 @@
       font-size: 2.5em;
       color: #00796b;
       white-space: nowrap;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
 
     .weather-box {
@@ -26,7 +26,7 @@
       margin: 20px auto;
       border: 1px solid #ccc;
       border-radius: 8px;
-      width: 300px;
+      width: 320px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
@@ -35,43 +35,37 @@
       font-size: 0.9em;
       color: #777;
     }
-
-    canvas {
-      margin-top: 30px;
-    }
   </style>
 </head>
 <body>
-  <h1>OSAME–Rosnička 🎉🌧️</h1>
+  <h1>OSAME–Rosnička 🌤️🌧️❄️☀️🌪️</h1>
 
   <div id="weather-box" class="weather-box">
-    <p>Načítám aktuální data... 🌀</p>
+    <p>Načítám data podle tvé polohy... 🧭</p>
   </div>
-
-  <canvas id="grafCO2" width="600" height="400"></canvas>
 
   <div class="footer">
     <p>Vytvořil student s modulem OSAME–EX 😎</p>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script type="module">
-    import { nactiOpenWeather } from './modules/load_openweather.js';
+    import { zjistiPolohu } from './modules/geo_detect.js';
+    import { nactiOpenWeatherGPS } from './modules/load_openweather.js';
 
-    nactiOpenWeather('Prague').then(data => {
-      document.getElementById('weather-box').innerHTML = `
-        <p><strong>🌡️ Teplota:</strong> ${data.teplota}°C</p>
-        <p><strong>🌬️ Vítr:</strong> ${data.vitr} m/s</p>
-        <p><strong>💧 Vlhkost:</strong> ${data.vlhkost}%</p>
-        <p><strong>📈 Tlak:</strong> ${data.tlak} hPa</p>
-        <p><strong>🌤️ Stav:</strong> ${data.stav}</p>
-        <p><strong>📍 Poloha:</strong> ${data.poloha}</p>
-      `;
-    }).catch(error => {
-      document.getElementById('weather-box').innerHTML = `
-        <p style="color: red;">❌ Nepodařilo se načíst data z OpenWeather.</p>
-        <p>${error.message}</p>
-      `;
+    zjistiPolohu().then(({ lat, lon, zdroj }) => {
+      nactiOpenWeatherGPS(lat, lon).then(data => {
+        document.getElementById('weather-box').innerHTML = `
+          <p><strong>🌡️ Teplota:</strong> ${data.teplota}°C</p>
+          <p><strong>🌬️ Vítr:</strong> ${data.vitr} m/s</p>
+          <p><strong>💧 Vlhkost:</strong> ${data.vlhkost}%</p>
+          <p><strong>📈 Tlak:</strong> ${data.tlak} hPa</p>
+          <p><strong>🌤️ Stav:</strong> ${data.stav}</p>
+          <p><strong>📍 Poloha:</strong> ${data.poloha}</p>
+          <p><em>Zdroj polohy:</em> ${zdroj}</p>
+        `;
+      }).catch(err => {
+        document.getElementById('weather-box').innerHTML = `<p style="color:red;">❌ Chyba: ${err.message}</p>`;
+      });
     });
   </script>
 </body>
