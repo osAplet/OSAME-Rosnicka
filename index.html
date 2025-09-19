@@ -2,132 +2,72 @@
 <html lang="cs">
 <head>
   <meta charset="UTF-8">
-  <title>OSAME-Rosnička</title>
+  <title>OSAME–Rosnička 🌧️</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      font-family: sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       background: #e0f7fa;
       color: #333;
       text-align: center;
       padding: 40px;
     }
+
     h1 {
       font-size: 2.5em;
       color: #00796b;
       white-space: nowrap;
+      margin-bottom: 20px;
     }
+
     .weather-box {
       background: #ffffff;
       padding: 20px;
+      margin: 20px auto;
+      border: 1px solid #ccc;
       border-radius: 8px;
-      box-shadow: 0 0 10px #ccc;
-      display: inline-block;
-      margin-bottom: 30px;
+      width: 300px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
+
     .footer {
       margin-top: 40px;
       font-size: 0.9em;
       color: #777;
     }
+
     canvas {
       margin-top: 30px;
     }
   </style>
 </head>
 <body>
-  <h1><span style="whit space: nowrap;">🌦️ OSAME-Rosnička</span></h1>
+  <h1>OSAME–Rosnička 🌦️</h1>
 
-  <div class="weather-box">
-    <p><strong>Teplota:</strong> 18°C</p>
-    <p><strong>Stav:</strong> Slunečno</p>
-    <p><strong>Poloh:</strong> Jih</p>
-    <p><strong>Tlak:</strong> 1013 hPa</p>
-    <p><strong>Vlhkost:</strong> 65%</p>
+  <div id="weather-box" class="weather-box">
+    <p>Načítám aktuální data... 🌀</p>
   </div>
 
-  <div id="dopad-box"></div>
   <canvas id="grafCO2" width="600" height="400"></canvas>
 
   <div class="footer">
-    <p>Data simulována • Modul OSAME-Recyklátor</p>
+    <p>Vytvořil student s modulem OSAME–EX 😎</p>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script type="module">
-    import { vypocetEkologickehoDopadu } from './modules/eco-impact.js';
-    import { zobrazGraf } from './modules/visualization.js';
+    import { nactiOpenWeather } from './modules/load_openweather.js';
 
-    const data = {
-      co2: 38.9,
-      ch4: 1.8,
-      nox: 0.3,
-      teplota: 18,
-      vlhkost: 65
-    };
-
-    const dopad = vypocetEkologickehoDopadu(data);
-    document.getElementById("dopad-box").innerHTML = `
-      <p><strong>Index znečištění:</strong> ${dopad}</p>
-    `;
-
-    const grafData = {
-      years: [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024],
-      values: [35.5, 36.1, 36.8, 37.2, 36.9, 36.5, 37.0, 37.8, 38.3, 38.9]
-    };
-
-    zobrazGraf('grafCO2', grafData);
+    nactiOpenWeather('Prague').then(data => {
+      document.getElementById('weather-box').innerHTML = `
+        <p><strong>🌡️ Teplota:</strong> ${data.teplota}°C</p>
+        <p><strong>🌬️ Vítr:</strong> ${data.vitr} m/s</p>
+        <p><strong>💧 Vlhkost:</strong> ${data.vlhkost}%</p>
+        <p><strong>📈 Tlak:</strong> ${data.tlak} hPa</p>
+        <p><strong>🌤️ Stav:</strong> ${data.stav}</p>
+        <p><strong>📍 Poloha:</strong> ${data.poloha}</p>
+      `;
+    });
   </script>
-<script type="module">
-  import { nactiPocasi } from './modules/load-weather.js';
-
-  nactiPocasi().then(data => {
-    document.querySelector(".weather-box").innerHTML = `
-      <p><strong>Teplota:</strong> ${data.teplota}°C</p>
-      <p><strong>Pociťová teplota:</strong> ${data.pocitova_teplota}°C</p>
-      <p><strong>Stav:</strong> ${data.stav}</p>
-      <p><strong>Poloh:</strong> ${data.poloha}</p>
-      <p><strong>Tlak:</strong> ${data.tlak} hPa</p>
-      <p><strong>Vlhkost:</strong> ${data.vlhkost}%</p>
-      <p><strong>Vítr:</strong> ${data.vitr}</p>
-      <p><strong>Východ Slunce:</strong> ${data.vychod_slunce}</p>
-      <p><strong>Západ Slunce:</strong> ${data.zapad_slunce}</p>
-      <p><strong>Fáze Měsíce:</strong> ${data.faze_mesice}</p>
-      <p><strong>Znamení:</strong> ${data.zverokruh}</p>
-      <p><strong>Astrální pozice:</strong> ${data.astralni_pozice}</p>
-    `;
-  });
-</script>
-<script type="module">
-  import { nactiPocasi } from './modules/load-weather.js';
-  import { zobrazGraf } from './modules/visualization.js';
-  import { predikujZmenu } from './modules/forecast-predictor.js';
-
-  nactiPocasi().then(data => {
-    document.querySelector(".weather-box").innerHTML = `
-      <p><strong>Teplota:</strong> ${data.teplota}°C</p>
-      <p><strong>Pociťová teplota:</strong> ${data.pocitova_teplota}°C</p>
-      <p><strong>Stav:</strong> ${data.stav}</p>
-      <p><strong>Poloh:</strong> ${data.poloha}</p>
-      <p><strong>Tlak:</strong> ${data.tlak} hPa</p>
-      <p><strong>Vlhkost:</strong> ${data.vlhkost}%</p>
-      <p><strong>Vítr:</strong> ${data.vitr}</p>
-      <p><strong>Východ Slunce:</strong> ${data.vychod_slunce}</p>
-      <p><strong>Západ Slunce:</strong> ${data.zapad_slunce}</p>
-      <p><strong>Fáze Měsíce:</strong> ${data.faze_mesice}</p>
-      <p><strong>Znamení:</strong> ${data.zverokruh}</p>
-      <p><strong>Astrální pozice:</strong> ${data.astralni_pozice}</p>
-      <p><strong>${predikujZmenu(data)}</strong></p>
-    `;
-
-    const grafData = {
-      years: ["Po", "Út", "St", "Čt", "Pá", "So", "Ne"],
-      values: [17, 18, 19, 20, 18, 17, 16]
-    };
-
-    document.body.innerHTML += `<canvas id="grafCO2" width="600" height="400"></canvas>`;
-    zobrazGraf('grafCO2', grafData);
-  });
-</script>
 </body>
 </html>
