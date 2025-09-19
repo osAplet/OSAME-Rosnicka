@@ -1,23 +1,45 @@
 export async function zjistiPolohu() {
-  // Nejprve zkusíme GPS
   return new Promise((resolve) => {
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        resolve({
-          lat: pos.coords.latitude,
-          lon: pos.coords.longitude,
-          zdroj: 'GPS'
-        });
-      },
-      async () => {
-        // Pokud GPS selže, použijeme IP geolokaci
+    let resolved = false;
+
+    // Timeout po 5 sekundách
+    const timeout = setTimeout(async () => {
+      if (!resolved) {
         const response = await fetch('https://ipapi.co/json/');
         const data = await response.json();
+        resolved = true;
         resolve({
           lat: data.latitude,
           lon: data.longitude,
-          zdroj: 'IP'
+          zdroj: 'IP (timeout)'
         });
+      }
+    }, 5000);
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        if (!resolved) {
+          clearTimeout(timeout);
+          resolved = true;
+          resolve({
+            lat: pos.coords.latitude,
+            lon: pos.coords.longitude,
+            zdroj: 'GPS'
+          });
+        }
+      },
+      async () => {
+        if (!resolved) {
+          clearTimeout(timeout);
+          const response = await fetch('https://ipapi.co/json/');
+          const data = await response.json();
+          resolved = true;
+          resolve({
+            lat: data.latitude,
+            lon: data.longitude,
+            zdroj: 'IP (fallback)'
+          });
+        }
       }
     );
   });
