@@ -24,9 +24,9 @@
       padding: 20px;
       margin: 20px auto;
       border: 1px solid #ccc;
-      border-radius: 8px;
-      width: 320px;
+      border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 320px;
     }
 
     .footer {
@@ -40,12 +40,13 @@
   <h1>OSAME–Rosnička 🌤️🌧️❄️☀️🌪️</h1>
 
   <div id="weather-box" class="weather-box">
-    <p>Načítám data podle tvé polohy... 🧭</p>
+    <p>Načítám aktuální data... 🌀</p>
   </div>
 
+  <div id="obleceni-box" class="weather-box"></div>
   <div id="astro-box" class="weather-box"></div>
   <div id="horoskop-box" class="weather-box"></div>
-  <div id="obleceni-box" class="weather-box"></div>
+
   <div class="footer">
     <p>Vytvořil student s modulem OSAME–EX 😎</p>
   </div>
@@ -57,31 +58,9 @@
     import { vypocitejZnamení } from './modules/horoskop.js';
     import { doporucObleceni } from './modules/obleceni.js';
 
-    const outfit = doporucObleceni(data);
-     document.getElementById('obleceni-box').innerHTML = `
-  <p>👗 Doporučení na dnešní outfit:</p>
-  <p><strong>${outfit}</strong></p>
-`;
-
-    ziskejAstronomii(lat, lon).then(astro => {
-     document.getElementById('astro-box').innerHTML = `
-    <p>🌅 Východ Slunce: ${astro.sunrise}</p>
-    <p>🌇 Západ Slunce: ${astro.sunset}</p>
-    <p>🌙 Východ Měsíce: ${astro.moonrise}</p>
-    <p>🌘 Západ Měsíce: ${astro.moonset}</p>
-    <p>🌔 Fáze Měsíce: ${astro.moon_phase}</p>
-    <p>📍 Azimut Slunce: ${astro.sun_azimuth}°</p>
-    <p>📏 Výška Slunce: ${astro.sun_altitude}°</p>
-  `;
-});
-
-   const znameni = vypocitejZnamení(new Date());
-    document.getElementById('horoskop-box').innerHTML = `
-  <p>🔮 Dnešní znamení: ${znameni}</p>
-  <p>✨ Horoskop: Dnes je vhodný den pro nové začátky a intuitivní rozhodnutí.</p>
-`;
     zjistiPolohu()
       .then(({ lat, lon, zdroj }) => {
+        // 🌦️ Počasí
         nactiOpenWeatherGPS(lat, lon)
           .then(data => {
             document.getElementById('weather-box').innerHTML = `
@@ -93,12 +72,40 @@
               <p><strong>📍 Poloha:</strong> ${data.poloha}</p>
               <p><em>Zdroj polohy:</em> ${zdroj}</p>
             `;
+
+            // 👕 Doporučení oblečení
+            const outfit = doporucObleceni(data);
+            document.getElementById('obleceni-box').innerHTML = `
+              <p>👗 Doporučení na dnešní outfit:</p>
+              <p><strong>${outfit}</strong></p>
+            `;
           })
           .catch(err => {
             document.getElementById('weather-box').innerHTML = `
               <p style="color:red;">❌ Chyba počasí: ${err.message}</p>
             `;
           });
+
+        // 🌌 Astronomická data
+        ziskejAstronomii(lat, lon)
+          .then(astro => {
+            document.getElementById('astro-box').innerHTML = `
+              <p>🌅 Východ Slunce: ${astro.sunrise}</p>
+              <p>🌇 Západ Slunce: ${astro.sunset}</p>
+              <p>🌙 Východ Měsíce: ${astro.moonrise}</p>
+              <p>🌘 Západ Měsíce: ${astro.moonset}</p>
+              <p>🌔 Fáze Měsíce: ${astro.moon_phase}</p>
+              <p>📍 Azimut Slunce: ${astro.sun_azimuth}°</p>
+              <p>📏 Výška Slunce: ${astro.sun_altitude}°</p>
+            `;
+          });
+
+        // 🔮 Horoskop
+        const znameni = vypocitejZnamení(new Date());
+        document.getElementById('horoskop-box').innerHTML = `
+          <p>🔮 Dnešní znamení: ${znameni}</p>
+          <p>✨ Horoskop: Dnes je vhodný den pro nové začátky a intuitivní rozhodnutí.</p>
+        `;
       })
       .catch(err => {
         document.getElementById('weather-box').innerHTML = `
