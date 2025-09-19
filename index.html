@@ -42,7 +42,7 @@
   </style>
 </head>
 <body>
-  <h1>OSAME–Rosnička 🌦️</h1>
+  <h1>OSAME–Rosnička 🎉🌧️</h1>
 
   <div id="weather-box" class="weather-box">
     <p>Načítám aktuální data... 🌀</p>
@@ -66,6 +66,11 @@
         <p><strong>📈 Tlak:</strong> ${data.tlak} hPa</p>
         <p><strong>🌤️ Stav:</strong> ${data.stav}</p>
         <p><strong>📍 Poloha:</strong> ${data.poloha}</p>
+      `;
+    }).catch(error => {
+      document.getElementById('weather-box').innerHTML = `
+        <p style="color: red;">❌ Nepodařilo se načíst data z OpenWeather.</p>
+        <p>${error.message}</p>
       `;
     });
   </script>
