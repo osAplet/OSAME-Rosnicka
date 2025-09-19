@@ -16,8 +16,7 @@
     h1 {
       font-size: 2.5em;
       color: #00796b;
-      white-space: nowrap;
-      margin-bottom: 10px;
+      margin-bottom: 20px;
     }
 
     .weather-box {
@@ -48,35 +47,35 @@
     <p>Vytvořil student s modulem OSAME–EX 😎</p>
   </div>
 
-<script type="module">
-  import { zjistiPolohu } from './modules/geo_detect.js';
-  import { nactiOpenWeatherGPS } from './modules/load_openweather.js';
+  <script type="module">
+    import { zjistiPolohu } from './modules/geo_detect.js';
+    import { nactiOpenWeatherGPS } from './modules/load_openweather.js';
 
-  zjistiPolohu()
-    .then(({ lat, lon, zdroj }) => {
-      nactiOpenWeatherGPS(lat, lon)
-        .then(data => {
-          document.getElementById('weather-box').innerHTML = `
-            <p><strong>🌡️ Teplota:</strong> ${data.teplota}°C</p>
-            <p><strong>🌬️ Vítr:</strong> ${data.vitr} m/s</p>
-            <p><strong>💧 Vlhkost:</strong> ${data.vlhkost}%</p>
-            <p><strong>📈 Tlak:</strong> ${data.tlak} hPa</p>
-            <p><strong>🌤️ Stav:</strong> ${data.stav}</p>
-            <p><strong>📍 Poloha:</strong> ${data.poloha}</p>
-            <p><em>Zdroj polohy:</em> ${zdroj}</p>
-          `;
-        })
-        .catch(err => {
-          document.getElementById('weather-box').innerHTML = `
-            <p style="color:red;">❌ Chyba počasí: ${err.message}</p>
-          `;
-        });
-    })
-    .catch(err => {
-      document.getElementById('weather-box').innerHTML = `
-        <p style="color:red;">❌ Chyba geolokace: ${err.message}</p>
-      `;
-    });
-</script>
+    zjistiPolohu()
+      .then(({ lat, lon, zdroj }) => {
+        nactiOpenWeatherGPS(lat, lon)
+          .then(data => {
+            document.getElementById('weather-box').innerHTML = `
+              <p><strong>🌡️ Teplota:</strong> ${data.teplota}°C</p>
+              <p><strong>🌬️ Vítr:</strong> ${data.vitr} m/s</p>
+              <p><strong>💧 Vlhkost:</strong> ${data.vlhkost}%</p>
+              <p><strong>📈 Tlak:</strong> ${data.tlak} hPa</p>
+              <p><strong>🌤️ Stav:</strong> ${data.stav}</p>
+              <p><strong>📍 Poloha:</strong> ${data.poloha}</p>
+              <p><em>Zdroj polohy:</em> ${zdroj}</p>
+            `;
+          })
+          .catch(err => {
+            document.getElementById('weather-box').innerHTML = `
+              <p style="color:red;">❌ Chyba počasí: ${err.message}</p>
+            `;
+          });
+      })
+      .catch(err => {
+        document.getElementById('weather-box').innerHTML = `
+          <p style="color:red;">❌ Chyba geolokace: ${err.message}</p>
+        `;
+      });
+  </script>
 </body>
 </html>

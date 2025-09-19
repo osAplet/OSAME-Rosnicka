@@ -2,7 +2,6 @@ export async function zjistiPolohu() {
   return new Promise((resolve) => {
     let resolved = false;
 
-    // Timeout po 5 sekundách
     const timeout = setTimeout(async () => {
       if (!resolved) {
         const response = await fetch('https://ipapi.co/json/');
