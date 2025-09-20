@@ -55,9 +55,8 @@
     import { zjistiPolohu } from './modules/geo_detect.js';
     import { nactiOpenWeatherGPS } from './modules/load_openweather.js';
     import { ziskejAstronomii } from './modules/astro_data.js';
-    import { vypocitejZnamení } from './modules/horoskop.js';
     import { doporucObleceni } from './modules/obleceni.js';
-
+    import { vypocitejZnamení } from './modules/horoskop.js';
     zjistiPolohu()
       .then(({ lat, lon, zdroj }) => {
         // 🌦️ Počasí
