@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OSAME-Rosnička</title>
+  <title>OSAME–Rosnička</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -46,7 +46,7 @@
   <h1>OSAME–Rosnička 🌟🌦️❄️☀️</h1>
 
   <div id="weather-box" class="weather-box">
-    <p>🌦️ Načítám aktuální data...</p>
+    <p>🌦️ Načítám aktuální počasí...</p>
   </div>
 
   <div id="obleceni-box" class="weather-box">
@@ -65,65 +65,92 @@
     <p>🔮 Načítám horoskop...</p>
   </div>
 
+  <div id="eco-box" class="weather-box">
+    <p>🌱 Načítám ekologický dopad...</p>
+  </div>
+
+  <div id="predict-box" class="weather-box">
+    <p>📈 Načítám predikci počasí...</p>
+  </div>
+
+  <div id="viz-box" class="weather-box">
+    <p>📊 Načítám vizualizaci...</p>
+  </div>
+
   <div class="footer">
     <p>Vytvořil student s modulem OSAME–OSAMI–EX 🦊</p>
   </div>
 
   <script type="module">
     import { zjistiPolohu } from './modules/geo_detect.js';
-    import { nactiLoadWeather } from './modules/load_weather.js';
-    import { ziskejAstroData } from './modules/astro_data.js';
+    import { nactiPocasi } from './modules/load_weather.js';
     import { doporucObleceni } from './modules/obleceni.js';
-    import { vypocitejHoroskop } from './modules/horoskop.js';
     import { urciFaziDne } from './modules/faze_dne.js';
+    import { ziskejAstronomii } from './modules/astro_data.js';
+    import { vypocitejHoroskop } from './modules/horoskop.js';
+    import { vypocitejEcoImpact } from './modules/eco_impact.js';
+    import { vypocitejPredikci } from './modules/predictor.js';
+    import { zobrazVizualizaci } from './modules/visualization.js';
 
-    zjistiPolohu()
-      .then(({ lat, lon }) => {
-        nactiOpenWeatherGPS(lat, lon)
-          .then(data => {
-            document.getElementById("weather-box").innerHTML = `
-              <p><strong>🌡️ Teplota:</strong> ${data.temp}°C</p>
-              <p><strong>💨 Vítr:</strong> ${data.wind} m/s</p>
-              <p><strong>💧 Vlhkost:</strong> ${data.humidity}%</p>
-              <p><strong>📈 Tlak:</strong> ${data.pressure} hPa</p>
-              <p><strong>☁️ Stav:</strong> ${data.status}</p>
-              <p><strong>📍 Poloha:</strong> ${data.location}</p>
-            `;
-          })
-          .catch(err => {
-            document.getElementById("weather-box").innerHTML = `<p style="color:red;">❌ Chyba při načítání dat</p>`;
-          });
-
-        doporucObleceni(lat, lon)
-          .then(outfit => {
-            document.getElementById("obleceni-box").innerHTML = `
-              <p><strong>🧥 Doporučení na dnešní oblečení:</strong> ${outfit}</p>
-            `;
-          });
-
-        ziskejAstronomii(lat, lon)
-          .then(astro => {
-            const fazeDne = urciFaziDne(astro);
-            document.getElementById("faze-box").innerHTML = `
-              <p><strong>🌗 Fáze dne:</strong> ${fazeDne}</p>
-            `;
-            document.getElementById("astro-box").innerHTML = `
-              <p><strong>🌅 Východ Slunce:</strong> ${astro.sunrise}</p>
-              <p><strong>🌇 Západ Slunce:</strong> ${astro.sunset}</p>
-              <p><strong>🌙 Východ Měsíce:</strong> ${astro.moonrise}</p>
-              <p><strong>🌘 Západ Měsíce:</strong> ${astro.moonset}</p>
-              <p><strong>🌑 Fáze Měsíce:</strong> ${astro.moonPhase}</p>
-              <p><strong>🧭 Azimut Slunce:</strong> ${astro.azimuth}°</p>
-              <p><strong>📏 Výška Slunce:</strong> ${astro.sunAltitude}°</p>
-            `;
-          });
-
-        const znameni = vypocitejZnameni();
-        document.getElementById("horoskop-box").innerHTML = `
-          <p><strong>♈ Dnešní znamení:</strong> ${znameni}</p>
-          <p><strong>📝 Horoskop:</strong> Dnes je vhodný čas k rodinné pohodě, popovídání si s rodiči či partnery. Něčím si udělejte radost ✨</p>
+    zjistiPolohu().then(({ lat, lon }) => {
+      nactiPocasi(lat, lon).then(data => {
+        document.getElementById("weather-box").innerHTML = `
+          <p><strong>🌡️ Teplota:</strong> ${data.temp}°C</p>
+          <p><strong>💨 Vítr:</strong> ${data.wind} m/s</p>
+          <p><strong>💧 Vlhkost:</strong> ${data.humidity}%</p>
+          <p><strong>📈 Tlak:</strong> ${data.pressure} hPa</p>
+          <p><strong>☁️ Stav:</strong> ${data.status}</p>
+          <p><strong>📍 Poloha:</strong> ${data.location}</p>
         `;
       });
+
+      doporucObleceni(lat, lon).then(outfit => {
+        document.getElementById("obleceni-box").innerHTML = `
+          <p><strong>🧥 Doporučení:</strong> ${outfit}</p>
+        `;
+      });
+
+      ziskejAstronomii(lat, lon).then(astro => {
+        const fazeDne = urciFaziDne(astro);
+        document.getElementById("faze-box").innerHTML = `
+          <p><strong>🌗 Fáze dne:</strong> ${fazeDne}</p>
+        `;
+        document.getElementById("astro-box").innerHTML = `
+          <p><strong>🌅 Východ Slunce:</strong> ${astro.sunrise}</p>
+          <p><strong>🌇 Západ Slunce:</strong> ${astro.sunset}</p>
+          <p><strong>🌙 Východ Měsíce:</strong> ${astro.moonrise}</p>
+          <p><strong>🌘 Západ Měsíce:</strong> ${astro.moonset}</p>
+          <p><strong>🌑 Fáze Měsíce:</strong> ${astro.moonPhase}</p>
+          <p><strong>🧭 Azimut Slunce:</strong> ${astro.azimuth}°</p>
+          <p><strong>📏 Výška Slunce:</strong> ${astro.sunAltitude}°</p>
+        `;
+      });
+
+      vypocitejHoroskop().then(horo => {
+        document.getElementById("horoskop-box").innerHTML = `
+          <p><strong>♈ Znamení:</strong> ${horo.sign}</p>
+          <p><strong>📝 Horoskop:</strong> ${horo.text}</p>
+        `;
+      });
+
+      vypocitejEcoImpact(lat, lon).then(eco => {
+        document.getElementById("eco-box").innerHTML = `
+          <p><strong>🌍 CO₂ dopad:</strong> ${eco.co2} kg</p>
+          <p><strong>💧 Spotřeba vody:</strong> ${eco.water} l</p>
+        `;
+      });
+
+      vypocitejPredikci(lat, lon).then(pred => {
+        document.getElementById("predict-box").innerHTML = `
+          <p><strong>📈 Výhled:</strong> ${pred.trend}</p>
+          <p><strong>📅 Předpověď:</strong> ${pred.forecast}</p>
+        `;
+      });
+
+      zobrazVizualizaci().then(svg => {
+        document.getElementById("viz-box").innerHTML = svg;
+      });
+    });
   </script>
 
 </body>
