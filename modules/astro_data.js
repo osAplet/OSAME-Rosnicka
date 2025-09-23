@@ -4,7 +4,7 @@ const apiKey = '80414d5e746e4659867123626463e8af';
 const lat = 49.093;
 const lon = 14.072;
 
-export async function zjistiAstronomii() {
+export async function ziskejAstronomii() {
   const url = `https://api.ipgeolocation.io/astronomy?apiKey=${apiKey}&lat=${lat}&long=${lon}`;
   try {
     const response = await fetch(url);
