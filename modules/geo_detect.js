@@ -1,37 +1,39 @@
-export async function zjistiPolohu() {
-  const timeoutMs = 5000;
+import { vykresliMapu } from './mapa.js';
+import { zobrazChybu } from './weather-box.js'; // mistr výdechů
 
-  const gpsPromise = new Promise((resolve, reject) => {
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        resolve({
-          lat: pos.coords.latitude,
-          lon: pos.coords.longitude,
-          zdroj: 'GPS'
-        });
-      },
-      () => reject('GPS selhala')
-    );
-  });
+export async function ziskejPolohu() {
+  const timeoutMS = 5000;
 
-  const timeoutPromise = new Promise((_, reject) =>
-    setTimeout(() => reject('GPS timeout'), timeoutMs)
-  );
+  if ("geolocation" in navigator) {
+    try {
+      const pos = await new Promise((res, rej) =>
+        navigator.geolocation.getCurrentPosition(res, rej, {
+          enableHighAccuracy: true,
+          timeout: timeoutMS,
+          maximumAge: 0
+        })
+      );
+
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      const smer = pos.coords.heading || 0;
+      vykresliMapu({ lat, lon, smer });
+      return { lat, lon, smer, zdroj: "📡 GPS" };
+    } catch (e) {
+      zobrazChybu("📡 GPS selhala. Zkontroluj lokalizaci nebo oprávnění.");
+    }
+  }
 
   try {
-    return await Promise.race([gpsPromise, timeoutPromise]);
-  } catch {
-    // 🌍 Fallback na IP
-    try {
-      const response = await fetch('https://ipapi.co/json/');
-      const data = await response.json();
-      return {
-        lat: data.latitude,
-        lon: data.longitude,
-        zdroj: 'IP fallback'
-      };
-    } catch (err) {
-      throw new Error('❌ Nelze získat polohu ani přes IP');
-    }
+    const res = await fetch("https://ipapi.co/json/");
+    const data = await res.json();
+    const lat = data.latitude;
+    const lon = data.longitude;
+    const smer = 0;
+    vykresliMapu({ lat, lon, smer });
+    return { lat, lon, smer, zdroj: "🌐 IP" };
+  } catch (err) {
+    zobrazChybu("🌐 IP lokalizace selhala. Zkontroluj připojení k síti.");
+    throw new Error("Nelze získat polohu");
   }
 }
