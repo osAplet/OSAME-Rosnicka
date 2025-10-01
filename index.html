@@ -136,16 +136,18 @@
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script type="module">
   import { zjistiPolohu } from'./modules/geo_detect.js';
+  import { vykresliPolohu } from'./modules/vykresli_polohu.js'; 
+  import { vykreliMapu } from'./modules/mapa.js';
   import { ziskejPocasi } from'./modules/load_openweather.js';
   import { ziskejPredpoved } from'./modules/predictor.js';
   import { doporucObleceni } from'./modules/obleceni.js';
   import { vypocitejHoroskop } from'./modules/horoskop.js';
   import { ziskejAstronomii } from'./modules/astro_data.js';
   import { vypocetEkologickehoDopadu } from'./modules/eco_impact.js';
-  import { vykresliMapu } from'./modules/mapa.js';
   import { ziskejVizualizaci } from'./modules/visualization.js';
   import { zobrazChybu } from'./modules/zobraz_chybu.js';
 
+  const map = L.map("mapa").setView([lat, lon], 13);
   const { lat, lon, smer, zdroj } = await zjistiPolohu();
 
   const pocasi = await ziskejPocasi(lat, lon);
