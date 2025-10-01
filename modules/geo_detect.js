@@ -1,6 +1,7 @@
-import { vykresliMapu } from './mapa.js';
-import { zobrazChybu } from './weather-box.js'; // mistr výdechů
+import { vykresliMapu } from'./mapa.js';
+import { zobrazChybu } from'./zobraz_chybu.js'; // mistr výdechů
 
+let zdroj = "neznámý";
 export async function ziskejPolohu() {
   const timeoutMS = 5000;
 
@@ -17,7 +18,10 @@ export async function ziskejPolohu() {
       const lat = pos.coords.latitude;
       const lon = pos.coords.longitude;
       const smer = pos.coords.heading || 0;
-      vykresliMapu({ lat, lon, smer });
+      const zdroj = "GPS";
+   
+   vykresliMapu({ lat, lon, smer });
+
       return { lat, lon, smer, zdroj: "📡 GPS" };
     } catch (e) {
       zobrazChybu("📡 GPS selhala. Zkontroluj lokalizaci nebo oprávnění.");
@@ -30,9 +34,12 @@ export async function ziskejPolohu() {
     const lat = data.latitude;
     const lon = data.longitude;
     const smer = 0;
+    const zdroj = "IP";
+    
     vykresliMapu({ lat, lon, smer });
+    
     return { lat, lon, smer, zdroj: "🌐 IP" };
-  } catch (err) {
+    } catch (err) {
     zobrazChybu("🌐 IP lokalizace selhala. Zkontroluj připojení k síti.");
     throw new Error("Nelze získat polohu");
   }

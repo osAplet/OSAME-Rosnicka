@@ -93,7 +93,7 @@
 </div>
 
 <!-- ⚠️ Výstrahy -->
-<div id="vystrhy-box" class="box">
+<div id="vystrahy-box" class="box">
   <h2>⚠️ Výstrahy</h2>
   <div>Načítám meteorologické výstrahy...</div>
 </div>
@@ -135,30 +135,31 @@
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script type="module">
-  import { zjistiPolohu } from './modules/geo_detect.js';
-  import { ziskejPocasi } from './modules/load_weather.js';
-  import { ziskejPredpoved } from './modules/prediktor.js';
-  import { doporucObleceni } from './modules/obleceni.js';
-  import { vypocitejHoroskop } from './modules/horoskop.js';
-  import { ziskejAstronomii } from './modules/astro_data.js';
-  import { vypocetEkologickehoDopadu } from './modules/eco_impact.js';
-  import { vykresliMapu } from './modules/mapa.js';
-  import { ziskejVizualizaci } from './modules/visualizace.js';
+  import { zjistiPolohu } from'./modules/geo_detect.js';
+  import { ziskejPocasi } from'./modules/load_openweather.js';
+  import { ziskejPredpoved } from'./modules/predictor.js';
+  import { doporucObleceni } from'./modules/obleceni.js';
+  import { vypocitejHoroskop } from'./modules/horoskop.js';
+  import { ziskejAstronomii } from'./modules/astro_data.js';
+  import { vypocetEkologickehoDopadu } from'./modules/eco_impact.js';
+  import { vykresliMapu } from'./modules/mapa.js';
+  import { ziskejVizualizaci } from'./modules/visualization.js';
+  import { zobrazChybu } from'./modules/zobraz_chybu.js';
 
   const { lat, lon, smer } = await zjistiPolohu();
 
   const pocasi = await ziskejPocasi(lat, lon);
   const predpoved = await ziskejPredpoved(lat, lon);
-  const obleceni = doporucObleceni(pocasi);
+  const obleceni = await doporucObleceni(pocasi);
   const horoskop = await vypocitejHoroskop();
   const astro = await ziskejAstronomii(lat, lon);
   const eko = await vypocetEkologickehoDopadu(pocasi);
   const vrstvy = await ziskejVizualizaci(lat, lon);
 
   document.getElementById("lokace-box").innerHTML = `
-    <h2>🧭 Poloha</h2>
-    <p>GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}</p>
-  `;
+    <h2>📍 Poloha</h2>
+    <p>${zdroj} lokalizace: ${lat.toFixed(4)}, ${lon.toFixed(4)}</p>
+  `;  
 
   document.getElementById("pocasi-box").innerHTML = `
     <h2>🌡️ Počasí</h2>

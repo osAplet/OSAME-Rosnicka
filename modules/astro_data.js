@@ -1,4 +1,4 @@
-import { urciFaziDne } from './faze_dne.js';
+import { urciFaziDne } from'./faze_dne.js';
 
 const apiKey = '80414d5e746e4659867123626463e8af';
 const lat = 49.093;

@@ -1,4 +1,4 @@
-import L from 'leaflet';
+import L from'leaflet';
 
 export function vykresliMapu({ lat, lon, smer }) {
   const map = L.map('map-box').setView([lat, lon], 13);
