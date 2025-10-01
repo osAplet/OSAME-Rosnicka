@@ -146,7 +146,7 @@
   import { ziskejVizualizaci } from'./modules/visualization.js';
   import { zobrazChybu } from'./modules/zobraz_chybu.js';
 
-  const { lat, lon, smer } = await zjistiPolohu();
+  const { lat, lon, smer, zdroj } = await zjistiPolohu();
 
   const pocasi = await ziskejPocasi(lat, lon);
   const predpoved = await ziskejPredpoved(lat, lon);
